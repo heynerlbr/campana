@@ -1,7 +1,7 @@
 {
   "expo": {
     "name": "campana",
-    "slug": "campana",
+    "slug": "starbell",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -25,6 +25,12 @@
     },
     "web": {
       "favicon": "./assets/favicon.png"
-    }
+    },
+    "extra": {
+      "eas": {
+        "projectId": "916a59df-abea-487f-8953-10818f416ab7"
+      }
+    },
+    "owner": "heynerbecerra"
   }
 }
