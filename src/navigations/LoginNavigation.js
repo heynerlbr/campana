@@ -1,6 +1,6 @@
 import React from "react";
 import { createStackNavigator } from "@react-navigation/stack";
-
+import { INFO_CLIENTE } from "../api/api";
 import WelcomeScreen from "../screens/WelcomeScreen";
 import LoginScreen from "../screens/LoginScreen";
 import PerfilScreen from "../screens/PerfilScreen";
@@ -9,6 +9,8 @@ import SignupScreen from "../screens/SignupScreen";
 const Stack = createStackNavigator();
 
 const LoginNavigation = () => {
+  // Verificar si el usuario está logueado
+  // const isUserLoggedIn = INFO_CLIENTE.length > 0;
   return (
     <Stack.Navigator
       screenOptions={{

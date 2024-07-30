@@ -1,70 +1,99 @@
 import React from "react";
-import { View, Text, StyleSheet, Image } from "react-native";
+import {
+  View,
+  Text,
+  StyleSheet,
+  ImageBackground,
+  ScrollView,
+} from "react-native";
 import { Avatar } from "react-native-elements";
+import COLORS from "../constants/colors";
+import { INFO_CLIENTE, obtenerPerfilUsuario } from "../api/api";
+import BtnLogout from "../componentes/BtnLogout";
 
 const Perfil = ({ route }) => {
-  const { userProfile } = route.params;
+  const userProfile = obtenerPerfilUsuario();
+  console.log(userProfile);
 
   return (
-    <View style={styles.container}>
-      <Image
-        source={require("../../assets/imagenes/background.png")}
-        style={styles.backgroundImage}
-      />
-      <View style={styles.content}>
-        <View style={styles.avatarContainer}>
-          <Avatar
-            rounded
-            source={require("../images/acecard.png")}
-            size="xlarge"
-          />
+    <ImageBackground
+      source={require("../../assets/imagenes/background.png")}
+      style={styles.backgroundImage}
+    >
+      <ScrollView contentContainerStyle={styles.container}>
+        <View style={styles.content}>
+          <View style={styles.card}>
+            <View style={styles.avatarContainer}>
+              <Avatar
+                rounded
+                source={require("../images/acecard.png")}
+                size="xlarge"
+              />
+            </View>
+            <Text style={styles.title}>Perfil de Usuario</Text>
+            <View style={styles.infoContainer}>
+              <Text style={styles.label}>Nombre:</Text>
+              <Text style={styles.text}>{userProfile.name}</Text>
+            </View>
+            <View style={styles.infoContainer}>
+              <Text style={styles.label}>Email:</Text>
+              <Text style={styles.text}>{userProfile.email}</Text>
+            </View>
+            <BtnLogout></BtnLogout>
+          </View>
         </View>
-        <Text style={styles.title}>Perfil de Usuario</Text>
-        <Text style={styles.label}>Nombre:</Text>
-        <Text style={styles.text}>{userProfile.name}</Text>
-        <Text style={styles.label}>Email:</Text>
-        <Text style={styles.text}>{userProfile.email}</Text>
-        {/* Mostrar más información del perfil de usuario */}
-      </View>
-    </View>
+      </ScrollView>
+    </ImageBackground>
   );
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
   backgroundImage: {
-    ...StyleSheet.absoluteFillObject,
+    flex: 1,
     resizeMode: "cover",
+    justifyContent: "center",
+  },
+  container: {
+    flexGrow: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    paddingVertical: 20,
   },
   content: {
-    flex: 1,
+    width: "100%",
+    paddingHorizontal: 20,
+    alignItems: "center",
+  },
+  card: {
+    backgroundColor: "rgba(255, 255, 255, 0.8)", // Tarjeta transparente
+    borderRadius: 20,
     padding: 20,
     alignItems: "center",
-    justifyContent: "center",
+    elevation: 5,
   },
   avatarContainer: {
     marginBottom: 20,
-    backgroundColor: "white",
-    borderRadius: 70,
   },
   title: {
-    fontSize: 20,
+    fontSize: 24,
     fontWeight: "bold",
     marginBottom: 10,
-    color: "white",
+    color: COLORS.primary,
+  },
+  infoContainer: {
+    marginBottom: 15,
+    flexDirection: "row",
+    alignItems: "center",
   },
   label: {
-    fontSize: 16,
-    fontWeight: "bold",
-    marginBottom: 5,
-    color: "white",
+    fontSize: 18,
+    fontWeight: "600",
+    marginRight: 10,
+    color: COLORS.dark,
   },
   text: {
-    fontSize: 16,
-    marginBottom: 10,
-    color: "white",
+    fontSize: 18,
+    color: COLORS.dark,
   },
 });
 

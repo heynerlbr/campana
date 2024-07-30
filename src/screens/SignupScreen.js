@@ -5,19 +5,23 @@ import {
   TextInput,
   TouchableOpacity,
   Pressable,
+  Alert,
+  ImageBackground,
+  StyleSheet,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import COLORS from "../constants/colors";
 import { Ionicons } from "@expo/vector-icons";
+import COLORS from "../constants/colors";
 import { urlRest, CLIENT_ID, CLIENT_SECRET } from "../api/api";
 
 const Signup = ({ navigation }) => {
+  const [nombre, setNombre] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isPasswordShown, setIsPasswordShown] = useState(false);
 
   const handleSignup = () => {
-    console.log("Signup:", email, password);
+    console.log("Signup:", nombre, email, password);
 
     let urlapi = urlRest + "api/RegisterMovil";
     console.log(urlapi);
@@ -29,18 +33,24 @@ const Signup = ({ navigation }) => {
         "X-Client-ID": CLIENT_ID,
         "X-Client-Secret": CLIENT_SECRET,
       },
-      body: JSON.stringify({ email, password }),
+      body: JSON.stringify({
+        name: nombre,
+        email,
+        password,
+        password_confirmation: password,
+      }),
     })
       .then((response) => response.json())
       .then((data) => {
         console.log(data);
         if (data.status === "ok") {
-          // Registro exitoso
           console.log("Registro exitoso:", data.msg);
-          // Podrías redirigir a la pantalla de inicio de sesión aquí
-          navigation.navigate("Login");
+          Alert.alert(
+            "Registro Exitoso",
+            "Se creó la cuenta de manera correcta",
+            [{ text: "OK", onPress: () => navigation.navigate("LoginForm") }]
+          );
         } else {
-          // Error en el registro
           console.log("Error en el registro:", data.msg);
         }
       })
@@ -50,156 +60,173 @@ const Signup = ({ navigation }) => {
   };
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: COLORS.white }}>
-      <View style={{ flex: 1, marginHorizontal: 22 }}>
-        <View style={{ marginVertical: 22 }}>
-          <Text
-            style={{
-              fontSize: 22,
-              fontWeight: "bold",
-              marginVertical: 12,
-              color: COLORS.black,
-            }}
-          >
-            ¡Regístrate!
-          </Text>
+    <ImageBackground
+      source={require("../../assets/imagenes/background.png")}
+      style={styles.backgroundImage}
+    >
+      <SafeAreaView style={{ flex: 1 }}>
+        <View style={styles.container}>
+          <View style={styles.formContainer}>
+            <View style={styles.titleContainer}>
+              <Text style={styles.title}>¡Regístrate!</Text>
+              <Text style={styles.subtitle}>¡Únete a nosotros hoy!</Text>
+            </View>
 
-          <Text
-            style={{
-              fontSize: 16,
-              color: COLORS.black,
-            }}
-          >
-            ¡Únete a nosotros hoy!
-          </Text>
-        </View>
+            <View style={styles.inputContainer}>
+              <Text style={styles.label}>Nombre completo</Text>
+              <View style={styles.inputWrapper}>
+                <TextInput
+                  placeholder="Ingresa nombre"
+                  placeholderTextColor={COLORS.black}
+                  value={nombre}
+                  onChangeText={setNombre}
+                  style={styles.input}
+                />
+              </View>
+            </View>
 
-        <View style={{ marginBottom: 12 }}>
-          <Text
-            style={{
-              fontSize: 16,
-              fontWeight: 400,
-              marginVertical: 8,
-            }}
-          >
-            Email
-          </Text>
+            <View style={styles.inputContainer}>
+              <Text style={styles.label}>Email</Text>
+              <View style={styles.inputWrapper}>
+                <TextInput
+                  placeholder="Ingresa email"
+                  placeholderTextColor={COLORS.black}
+                  keyboardType="email-address"
+                  value={email}
+                  onChangeText={setEmail}
+                  style={styles.input}
+                />
+              </View>
+            </View>
 
-          <View
-            style={{
-              width: "100%",
-              height: 48,
-              borderColor: COLORS.black,
-              borderWidth: 1,
-              borderRadius: 8,
-              alignItems: "center",
-              justifyContent: "center",
-              paddingLeft: 22,
-            }}
-          >
-            <TextInput
-              placeholder="Ingresa email"
-              placeholderTextColor={COLORS.black}
-              keyboardType="email-address"
-              value={email}
-              onChangeText={setEmail}
-              style={{
-                width: "100%",
-              }}
-            />
-          </View>
-        </View>
-
-        <View style={{ marginBottom: 12 }}>
-          <Text
-            style={{
-              fontSize: 16,
-              fontWeight: 400,
-              marginVertical: 8,
-            }}
-          >
-            Contraseña
-          </Text>
-
-          <View
-            style={{
-              width: "100%",
-              height: 48,
-              borderColor: COLORS.black,
-              borderWidth: 1,
-              borderRadius: 8,
-              alignItems: "center",
-              justifyContent: "center",
-              paddingLeft: 22,
-            }}
-          >
-            <TextInput
-              placeholder="Ingresa contraseña"
-              placeholderTextColor={COLORS.black}
-              secureTextEntry={isPasswordShown}
-              value={password}
-              onChangeText={setPassword}
-              style={{
-                width: "100%",
-              }}
-            />
+            <View style={styles.inputContainer}>
+              <Text style={styles.label}>Contraseña</Text>
+              <View style={styles.inputWrapper}>
+                <TextInput
+                  placeholder="Ingresa contraseña"
+                  placeholderTextColor={COLORS.black}
+                  secureTextEntry={isPasswordShown}
+                  value={password}
+                  onChangeText={setPassword}
+                  style={styles.input}
+                />
+                <TouchableOpacity
+                  onPress={() => setIsPasswordShown(!isPasswordShown)}
+                  style={styles.eyeIcon}
+                >
+                  <Ionicons
+                    name={isPasswordShown ? "eye-off" : "eye"}
+                    size={24}
+                    color={COLORS.black}
+                  />
+                </TouchableOpacity>
+              </View>
+            </View>
 
             <TouchableOpacity
-              onPress={() => setIsPasswordShown(!isPasswordShown)}
-              style={{
-                position: "absolute",
-                right: 12,
-              }}
+              style={styles.signupButton}
+              onPress={handleSignup}
             >
-              {isPasswordShown == true ? (
-                <Ionicons name="eye-off" size={24} color={COLORS.black} />
-              ) : (
-                <Ionicons name="eye" size={24} color={COLORS.black} />
-              )}
+              <Text style={styles.signupButtonText}>Registrarse</Text>
             </TouchableOpacity>
+
+            <View style={styles.loginContainer}>
+              <Text style={styles.loginText}>¿Ya tienes una cuenta?</Text>
+              <Pressable onPress={() => navigation.navigate("LoginForm")}>
+                <Text style={styles.loginLink}>Iniciar sesión</Text>
+              </Pressable>
+            </View>
           </View>
         </View>
-
-        <TouchableOpacity
-          style={{
-            backgroundColor: COLORS.primary,
-            height: 48,
-            borderRadius: 8,
-            alignItems: "center",
-            justifyContent: "center",
-            marginBottom: 12,
-          }}
-          onPress={handleSignup}
-        >
-          <Text style={{ fontSize: 16, color: COLORS.white }}>Registrarse</Text>
-        </TouchableOpacity>
-
-        <View
-          style={{
-            flexDirection: "row",
-            justifyContent: "center",
-            marginVertical: 22,
-          }}
-        >
-          <Text style={{ fontSize: 16, color: COLORS.black }}>
-            ¿Ya tienes una cuenta?{" "}
-          </Text>
-          <Pressable onPress={() => navigation.navigate("LoginForm")}>
-            <Text
-              style={{
-                fontSize: 16,
-                color: COLORS.primary,
-                fontWeight: "bold",
-                marginLeft: 6,
-              }}
-            >
-              Iniciar sesión
-            </Text>
-          </Pressable>
-        </View>
-      </View>
-    </SafeAreaView>
+      </SafeAreaView>
+    </ImageBackground>
   );
 };
+
+const styles = StyleSheet.create({
+  backgroundImage: {
+    flex: 1,
+    resizeMode: "cover",
+    justifyContent: "center",
+  },
+  container: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  formContainer: {
+    backgroundColor: "rgba(255, 255, 255, 0.8)",
+    padding: 20,
+    borderRadius: 10,
+    width: "80%",
+    maxWidth: 400,
+  },
+  titleContainer: {
+    alignItems: "center",
+    marginBottom: 20,
+  },
+  title: {
+    fontSize: 22,
+    fontWeight: "bold",
+    marginBottom: 10,
+    color: COLORS.black,
+  },
+  subtitle: {
+    fontSize: 16,
+    color: COLORS.black,
+  },
+  inputContainer: {
+    marginBottom: 20,
+  },
+  label: {
+    fontSize: 16,
+    fontWeight: "400",
+    marginBottom: 8,
+  },
+  inputWrapper: {
+    width: "100%",
+    height: 48,
+    borderColor: COLORS.black,
+    borderWidth: 1,
+    borderRadius: 8,
+    flexDirection: "row",
+    alignItems: "center",
+    paddingLeft: 12,
+  },
+  input: {
+    flex: 1,
+    height: "100%",
+    color: COLORS.black,
+  },
+  eyeIcon: {
+    paddingHorizontal: 12,
+  },
+  signupButton: {
+    backgroundColor: COLORS.primary,
+    height: 48,
+    borderRadius: 8,
+    alignItems: "center",
+    justifyContent: "center",
+    marginBottom: 12,
+  },
+  signupButtonText: {
+    fontSize: 16,
+    color: COLORS.white,
+  },
+  loginContainer: {
+    flexDirection: "row",
+    justifyContent: "center",
+  },
+  loginText: {
+    fontSize: 16,
+    color: COLORS.black,
+  },
+  loginLink: {
+    fontSize: 16,
+    color: COLORS.primary,
+    fontWeight: "bold",
+    marginLeft: 6,
+  },
+});
 
 export default Signup;

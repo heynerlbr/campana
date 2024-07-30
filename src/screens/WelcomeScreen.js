@@ -1,121 +1,142 @@
-import { View, Text, Pressable, Image } from "react-native";
 import React from "react";
-import { LinearGradient } from "expo-linear-gradient";
-import COLORS from "../constants/colors";
-import Button from "../componentes/Buttons";
+import {
+  View,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
+  Image,
+  ImageBackground,
+} from "react-native";
+import Animated, {
+  useSharedValue,
+  withTiming,
+  useAnimatedStyle,
+  Easing,
+  interpolate,
+  Extrapolate,
+} from "react-native-reanimated";
 
-const Welcome = ({ navigation }) => {
+const WelcomeScreen = ({ navigation }) => {
+  const buttonPositionY = useSharedValue(0); // Posición inicial del botón
+
+  const config = {
+    duration: 500,
+    easing: Easing.bezier(0.5, 0.01, 0, 1),
+  };
+
+  const buttonStyle = useAnimatedStyle(() => {
+    return {
+      transform: [
+        { translateY: withTiming(buttonPositionY.value, config) },
+        {
+          scale: interpolate(
+            buttonPositionY.value,
+            [0, -100],
+            [1, 0.9],
+            Extrapolate.CLAMP
+          ),
+        }, // Agregar escala al botón
+      ],
+    };
+  });
+
+  React.useEffect(() => {
+    // Anima el botón hasta el centro de la pantalla
+    buttonPositionY.value = -100; // Puedes ajustar el valor según sea necesario
+  }, []); // Se ejecuta una vez al montar el componente
+
+  const handleLoginPress = () => {
+    navigation.navigate("LoginForm");
+  };
+
   return (
-    <LinearGradient
-      style={{
-        flex: 1,
-      }}
-      colors={[COLORS.secondary, COLORS.primary]}
+    <ImageBackground
+      source={require("../../assets/imagenes/background.png")}
+      style={styles.backgroundImage}
     >
-      <View style={{ flex: 1 }}>
-        <View>
+      <View style={styles.container}>
+        <View style={styles.imageContainer}>
           <Image
-            source={require("../../assets/hero1.jpg")}
-            style={{
-              height: 100,
-              width: 100,
-              borderRadius: 20,
-              position: "absolute",
-              top: 10,
-              transform: [
-                { translateX: 20 },
-                { translateY: 50 },
-                { rotate: "-15deg" },
-              ],
-            }}
+            source={require("../../assets/icon.png")}
+            style={styles.icon}
           />
-
-          <Image
-            source={require("../../assets/hero3.jpg")}
-            style={{
-              height: 100,
-              width: 100,
-              borderRadius: 20,
-              position: "absolute",
-              top: -30,
-              left: 100,
-              transform: [
-                { translateX: 50 },
-                { translateY: 50 },
-                { rotate: "-5deg" },
-              ],
-            }}
-          />
-
-          <Image
-            source={require("../../assets/hero3.jpg")}
-            style={{
-              width: 100,
-              height: 100,
-              borderRadius: 20,
-              position: "absolute",
-              top: 130,
-              left: -50,
-              transform: [
-                { translateX: 50 },
-                { translateY: 50 },
-                { rotate: "15deg" },
-              ],
-            }}
-          />
-
-          <Image
-            source={require("../../assets/hero2.jpg")}
-            style={{
-              height: 200,
-              width: 200,
-              borderRadius: 20,
-              position: "absolute",
-              top: 110,
-              left: 100,
-              transform: [
-                { translateX: 50 },
-                { translateY: 50 },
-                { rotate: "-15deg" },
-              ],
-            }}
-          />
+          <Text style={styles.title}>Bienvenido a StarBell</Text>
+          <Text style={styles.subtitle}>Explora y disfruta</Text>
         </View>
-
-        {/* content  */}
-
-        <View
-          style={{
-            paddingHorizontal: 22,
-            position: "absolute",
-            top: 400,
-            width: "100%",
-          }}
-        >
-          <Button
-            title="Login"
-            onPress={() => navigation.navigate("LoginForm")}
-          />
-          <Text
-            style={{
-              fontSize: 50,
-              fontWeight: 800,
-              color: COLORS.white,
-            }}
-          >
-            Experiencia
-          </Text>
-          <Text
-            style={{
-              fontSize: 46,
-              fontWeight: 800,
-              color: COLORS.white,
-            }}
-          ></Text>
-        </View>
+        <Animated.View style={[styles.buttonContainer, buttonStyle]}>
+          <TouchableOpacity onPress={handleLoginPress} style={styles.button}>
+            <Text style={styles.buttonText}>Iniciar sesión</Text>
+          </TouchableOpacity>
+        </Animated.View>
       </View>
-    </LinearGradient>
+    </ImageBackground>
   );
 };
 
-export default Welcome;
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  imageContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  icon: {
+    width: 150, // Ajusta las dimensiones de la imagen según sea necesario
+    height: 150,
+    resizeMode: "contain",
+  },
+  title: {
+    fontSize: 28,
+    fontWeight: "bold",
+    color: "#fff",
+    marginTop: 20,
+    textShadowColor: "rgba(0, 0, 0, 0.8)", // Cambio del color del sombreado
+    textShadowOffset: { width: 2, height: 2 },
+    textShadowRadius: 5,
+  },
+  subtitle: {
+    fontSize: 18,
+    color: "#fff",
+    marginTop: 10,
+    textShadowColor: "rgba(0, 0, 0, 0.8)", // Cambio del color del sombreado
+    textShadowOffset: { width: 2, height: 2 },
+    textShadowRadius: 5,
+  },
+  buttonContainer: {
+    position: "absolute",
+    bottom: 50,
+    width: "100%",
+    alignItems: "center",
+  },
+  button: {
+    backgroundColor: "#007bff",
+    paddingVertical: 14,
+    paddingHorizontal: 28,
+    borderRadius: 25,
+    marginVertical: 10,
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 3,
+    },
+    shadowOpacity: 0.27,
+    shadowRadius: 4.65,
+    elevation: 6,
+  },
+  buttonText: {
+    color: "#fff",
+    fontSize: 18,
+    fontWeight: "bold",
+  },
+  backgroundImage: {
+    flex: 1,
+    resizeMode: "cover",
+    justifyContent: "center",
+  },
+});
+
+export default WelcomeScreen;

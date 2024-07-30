@@ -20,7 +20,6 @@ const DetalleLugar = ({ route }) => {
         <Text style={styles.text}>{lugar.departamento}</Text>
         <Text style={styles.label}>Municipio:</Text>
         <Text style={styles.text}>{lugar.municipio}</Text>
-        {/* Agrega más información si es necesario */}
       </View>
     </LinearGradient>
   );
